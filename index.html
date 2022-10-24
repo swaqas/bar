@@ -1,0 +1,131 @@
+<html>
+
+<head>
+
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <!-- JavaScript Bundle with Popper -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+</head>
+
+<body>
+
+    <div class="jumbotron text-center">
+        <h1>With holding tax calculator</h1>
+
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-1">
+
+            </div>
+            <div class="col-sm-8">
+                <p>fill out the form:</p>
+                <form action="/action_page.php">
+                    <div class="form-group">
+                        <label for="transaction">Step 1) Select transaction:</label>
+                        <select class="form-control" id="transaction" onchange="fillDescription(this);">
+                            <option>Please Select</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Step 2) Select description:</label>
+                        <select class="form-control" id="description"  onchange="fillTaxpayer(this);"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taxpayer">Step 3) Select Tax Payer:</label>
+                        <select class="form-control" id="taxpayer" onchange="fillStatus(this);"></select>
+                    </div>
+                    <div class="form-group">
+                        <label for="status">Step 4) Select Status:</label>
+                        <select class="form-control" id="status" disabled="true" onchange="fillTaxpercent(this);">
+                        <option selected>None</option>
+                        <option value="Active">Active</option>
+                        <option value="Non Active">Non Active</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>tax percentage:</label>
+                        <input type="text" class="form-control" id="taxpercentage" >
+                    </div>
+                    <div class="form-group">
+                        <label>amount:</label>
+                        <input type="text" class="form-control" id="amount"  onchange="calcTax();">
+                    </div>
+                    <div class="form-group">
+                        <label>with holding tax:</label>
+                        <input type="text" class="form-control" id="whtax">
+                    </div>
+
+                </form>
+            </div>
+            <div class="col-sm-1">
+
+            </div>
+        </div>
+    </div>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3"
+    crossorigin="anonymous"></script>
+<script>
+    obj = { "Import of goods": { "ref": "148", "Goods classified in Part I of the Twelfth Schedule": { "Any person": { "Active": "1.00%", "Non Active": "2.00%" } }, "Goods classified in Part II of the Twelfth Schedule": { "Other than commercial importer": { "Active": "2.00%", "Non Active": "4.00%" }, "Commercial Importer": { "Active": "3.50%", "Non Active": "7.00%" } }, "Goods classified in Part III of the Twelfth Schedule": { "Any person": { "Active": "5.50%", "Non Active": "11.00%" } }, "Items covered under SRO. 1125(I)2011 dated 31 December 2011": { "Manufacturer covered under SRO. 1125(I)2011 dated 31 December 2011": { "Active": "1.00%", "Non Active": "2.00%" } }, "Finished pharmaceutical products that are not manufactured in Pakistan as certified by DRAP.": { "Any person": { "Active": "4.00%", "Non Active": "8.00%" } }, "CKD kits of electric vehicles for small cars or SUVs with battery upto 50 kwh and LCVs with battery upto 150kwh": { "Any person": { "Active": "1.00%", "Non Active": "2.00%" } }, "Mobile phones": { "Any person": { "Active": "Varying rates", "Non Active": "Varying rates" } } }, "Dividend": { "ref": "150", "Independent Power Producers where dividend tax is a pass- through item under an Implementation Agreement or Power Purchase Agreement or Energy Purchase Agreement and is required to be reimbursed by Central Power Purchasing Agency (CPPA-G) or its predecessor or successor entity.": { "Any person": { "Active": "7.50%", "Non Active": "15.00%" } }, "Company where no tax is payable due to exemption of income or carry forward business losses or claim of tax credit": { "Any person": { "Active": "25.00%", "Non Active": "50.00%" } }, "Special Purpose Vehicle as defined under the Real Estate Investment Trust Regulations- 2015": { "REIT scheme": { "Active": "0.00%", "Non Active": "0.00%" }, "Any person other than REIT scheme": { "Active": "35.00%", "Non Active": "70.00%" } }, "Mutual Fund or Real Estate Investment Trust": { "Any person": { "Active": "15.00%", "Non Active": "30.00%" } }, "Any other case": { "Any person": { "Active": "15.00%", "Non Active": "30.00%" } } }, "Profit on debt": { "ref": "151", "Yield on an account- deposit or a certificate under the National Savings Scheme or Post office saving account": { "Any person": { "Active": "15.00%", "Non Active": "30.00%" } }, "Profit on a debt- being on an account or deposit maintained with a banking company or a financial institution": { "Any person": { "Active": "15.00%", "Non Active": "30.00%" } }, "Profit on any security issued by Federal Government- a Provincial Government or a local Government other than profit on National Saving Scheme or Post Office Saving account to any person": { "Any person": { "Active": "15.00%", "Non Active": "30.00%" } }, "Profit on any bond- certificate- debenture- security or instrument of any kind (excluding loan agreement between a borrower and a banking company or a development finance institution) issued by a banking company- a financial institution- company or a finance society- to any person other than a financial institution.": { "Any person": { "Active": "15.00%", "Non Active": "30.00%" } } }, "Return on investment in sukuk": { "ref": "151 (1A)", "Return on investment in sukuk": { "Company": { "Active": "25.00%", "Non Active": "50.00%" }, "Ind & AOP (where the return is more than one million in a year)": { "Active": "12.50%", "Non Active": "25.00%" }, "Ind & AOP (where the return is less than one million in a year)": { "Active": "10.00%", "Non Active": "20.00%" } } }, "Payment to non-residents": { "ref": "152", "Royalty and technical fee": { "Any non-resident person not having PE in Pak": { "": "15.00%" } }, "Execution of a contract or sub-contract under a construction- assembly or installation project in Pakistan including a contract for the supply of supervisory activities in relation to such projects or any other contract for construction or services rendered relating thereto": { "Any non-resident person": { "": "7.00%" } }, "Contract for advertisement services rendered by TV Satellite channel": { "Any non-resident person": { "": "7.00%" } }, "Insurance premium or re-insurance premium": { "Any non-resident person": { "": "5.00%" } }, "Advertisement services relaying from outside Pakistan": { "Any non-resident person": { "": "10.00%" } }, "Foreign produced commercial for advertisement on any television channel or any other media": { "Any non-resident person": { "": "20.00%" } }, "Capital gain arising to a PE of non-resident company on the disposal of debt instrument and government securities including T-Bills and PIBs invested through special convertible rupee account": { "Any non-resident company": { "": "10.00%" } }, "Capital gain arising on the disposal of debt instruments and government securities and certificates invested through Foreign Currency Value Account or non-resident Pakistani Rupee Value Account by a non-resident individual holding CNIC- NICOP or POC.": { "Any non-resident individual": { "": "10.00%" } }, "Return on investment in sukuk": { "Non-resident company": { "": "25.00%" }, "Non-resident Ind & AOP (where the return is more than one million per annum)": { "": "12.50%" }, "Non-resident Ind & AOP (where the return is less than one million per annum)": { "": "10.00%" } }, "Profit on debt to non-resident person not having a PE in Pakistan": { "Any non-resident person not having PE in Pak": { "": "10.00%" } }, "Payments to an individual- on account of profit on debt earned from a debt instrument- whether conventional or shariah compliant- issued by the Federal Government under the Public Debt Act- 1944 and purchased exclusively through a bank account maintained abroad- a non-resident repatriable rupee account or a foreign currency account maintained with a banking company in Pakistan": { "Non-resident Individual": { "": "10.00%" } }, "Fee for offshore digital services": { "Any non-resident person not having PE in Pak": { "": "10.00%" } }, "Payment of service charges or commission or fee to the global money transfer operators- international money transfer operators or such other persons engaged in international money transfer operations or such other persons engaged in international money transfer or cross-border remittance for facilitating outward remittances by exchange companies licensed by State Bank of Pakistan": { "Any non-resident person": { "": "10.00%" } }, "Payment by banking company to card network company or payment gateway or any other person- of any transaction fee or licensing fee or service charges or commission or fee by whatever name called or inter-bank financial telecommunication services": { "Any non-resident person": { "": "10.00%" } }, "Other payments": { "Any non-resident person": { "": "20.00%" } }, "Sale of goods": { "Non-resident company having PE in Pakistan": { "Active": "4.00%", "Non Active": "8.00%" }, "Non-resident Ind / AOP having PE in Pakistan": { "Active": "4.50%", "Non Active": "9.00%" } }, "Specified Services": { "Non-resident person having PE in Pakistan": { "Active": "3.00%", "Non Active": "6.00%" } }, "Other than Specified Services": { "Non-resident company having PE in Pakistan": { "Active": "8.00%", "Non Active": "16.00%" }, "Non-resident Ind / AOP having PE in Pakistan": { "Active": "10.00%", "Non Active": "20.00%" } }, "Sports person contract": { "Non-resident person having PE in Pakistan": { "Active": "10.00%", "Non Active": "20.00%" } }, "Other contract": { "Non-resident person having PE in Pakistan": { "Active": "7.00%", "Non Active": "14.00%" } } }, "Goods": { "ref": "153", "Rice- cotton seed oil or edible oil": { "Any person": { "Active": "1.50%", "Non Active": "3.00%" } }, "Cigarette and pharmaceutical products": { "Distributor": { "Active": "1.00%", "Non Active": "2.00%" }, "Other than distributor Company": { "Active": "4.00%", "Non Active": "8.00%" }, "Other than distributor Ind / AOP": { "Active": "4.50%", "Non Active": "9.00%" } }, "Gold and silver and articles thereof": { "Any person": { "Active": "1.00%", "Non Active": "2.00%" } }, "Any other goods (including toll manufacturing)": { "Company": { "Active": "4.00%", "Non Active": "8.00%" }, "Individual": { "Active": "4.50%", "Non Active": "9.00%" }, "AOP": { "Active": "4.50%", "Non Active": "9.00%" } } }, "Services": { "ref": "153", "Transport services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Freight forwarding services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Air cargo services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Courier services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Manpower outsourcing services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Hotel services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Security guard services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Software development services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "IT services and IT enabled services as defined in section 2": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Tracking services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Advertising services (other than by print or electronic media)": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Share registrar services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Engineering services including architectural services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Warehousing services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Services rendered by asset management companies": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Data services provided under license issued by the Pakistan Telecommunication Authority": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Telecommunication infrastructure (tower) services- car rental services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Building maintenance services- services rendered by Pakistan Stock Exchange Limited and Pakistan Mercantile Exchange Limited": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Inspection- certification- testing and training services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Oilfield services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Telecommunication services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Collateral management services": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Travel and tour services.": { "Any person": { "Active": "3.00%", "Non Active": "6.00%" } }, "Electronic and print media for advertisement services": { "Any person": { "Active": "1.50%", "Non Active": "3.00%" } }, "Oil tanker contractor services": { "Any person": { "Active": "2.00%", "Non Active": "4.00%" } }, "Any other services": { "Company": { "Active": "8.00%", "Non Active": "16.00%" }, "Individual": { "Active": "10.00%", "Non Active": "20.00%" }, "AOP": { "Active": "10.00%", "Non Active": "20.00%" } }, "Stitching- dying- printing- embroidery- washing- sizing and weaving provided to exporter or an export house": { "Any person": { "Active": "1.00%", "Non Active": "2.00%" } } }, "Execution of Contracts": { "ref": "153", "Sports person contract": { "Sports person": { "Active": "10.00%", "Non Active": "20.00%" } }, "Any other contract": { "Company": { "Active": "6.50%", "Non Active": "13.00%" }, "Individual": { "Active": "7.00%", "Non Active": "14.00%" }, "AOP": { "Active": "7.00%", "Non Active": "14.00%" } } }, "Export of services": { "ref": "154A", "Exports of computer software or IT services or IT enabled services persons registered with Pakistan Software Export Board": { "Any person": { "": "0.25%" } }, "Services or technical services rendered outside Pakistan or exported from Pakistan": { "Any person": { "": "1.00%" } }, "Royalty- commission or fees derived by a resident company from a foreign enterprise in consideration for the use outside Pakistan of any patent- invention- model- design- secret process or formula or similar property right- or information concerning industrial- commercial or scientific knowledge- experience or skill made available or provided to such enterprise;": { "Any person": { "": "1.00%" } }, "Construction contracts executed outside Pakistan": { "Any person": { "": "1.00%" } }, "Foreign commission due to an indenting commission agent": { "Any person": { "": "1.00%" } }, "Other services rendered outside Pakistan as notified by the Board from time to time": { "Any person": { "": "1.00%" } } }, "Rent of immovable property": { "ref": "155", "Rent of immovable property including rent of furniture and fixtures and amount of service relating to such property": { "Company": { "Active": "15.00%", "Non Active": "30.00%" }, "Individual": { "Active": "Varying rates", "Non Active": "Varying rates" }, "AOP": { "Active": "Varying rates", "Non Active": "Varying rates" } } }, "Prizes and winnings": { "ref": "156", "Prize on prize bond or cross-word puzzle": { "Any person": { "Active": "15.00%", "Non Active": "30.00%" } }, "Winnings from a raffle- lottery- prize on winning a quiz- prize offered by a company for promotion of sale": { "Any person": { "Active": "20.00%", "Non Active": "40.00%" } } }, "Brokerage & Commission": { "ref": "233", "Advertisement agent": { "Any person": { "Active": "10.00%", "Non Active": "20.00%" } }, "Life Insurance Agent where commission is less than Rs. 0.5 million per annum": { "Any person": { "Active": "8.00%", "Non Active": "16.00%" } }, "Life Insurance Agent where commission is more than Rs. 0.5 million per annum": { "Any person": { "Active": "12.00%", "Non Active": "24.00%" } }, "Any other agent": { "Any person": { "Active": "12.00%", "Non Active": "24.00%" } } }, "Telephone & internet bill": { "ref": "236", "Telephone bill exceeding Rs 1-000": { "Any person": { "": "10.00%" } }, "Subscriber of internet and prepaid internet card or sale of units through any electronic medium or whatever form": { "Any person": { "": "8.00%" } }, "Mobile telephone and prepaid card for telephones or sale of units through any electronic medium or whatever form.": { "Any person": { "": "8.00%" } } }, "Sale by auction / tender": { "ref": "236A", "Sale of goods or property (excluding immovable property)": { "Any person": { "Active": "10.00%", "Non Active": "20.00%" } }, "Sale of immovable property": { "Any person": { "Active": "5.00%", "Non Active": "10.00%" } }, "Lease of right to collect toll": { "Any person": { "Active": "10.00%", "Non Active": "20.00%" } } }, "TV plays and advertisements": { "ref": "236CA", "Foreign-produced TV drama serial or play": { "Any person": { "Active": "Rs. 1-000-000 per episode", "Non Active": "Rs. 2-000-000 per episode" } }, "Foreign-produced TV play (single episode)": { "Any person": { "Active": "Rs. 3-000-000", "Non Active": "Rs. 6-000-000" } }, "Advertisement starring foreign actor": { "Any person": { "Active": "Rs. 100-000 per second", "Non Active": "Rs. 200-000 per second" } } }, "Sale or transfer of immovable property": { "ref": "236C", "Sale or transfer of immovable property": { "Any person": { "Active": "2.00%", "Non Active": "4.00%" } } }, "Sales to distributors- dealers and wholesalers": { "ref": "236G", "Pharmaceuticals- poultry and animal feed- edible oil and ghee- auto-parts- tyres- varnishes- chemicals- cosmetics- IT equipment- electronics- sugar- cement- iron and steel products- motorcycles- pesticides- cigarettes- glass- textile- beverages- paint or foam sector": { "Any person": { "Active": "0.10%", "Non Active": "0.20%" } }, "Fertilizer": { "Any person": { "Active (Income Tax)": "0.70%" } }, "NA": { "Any person": { "Active (Income Tax & Sales Tax both)": "0.25%", "Non Active (Income Tax)": "1.40%" } } }, "Sales to retailers": { "ref": "236H", "Pharmaceuticals- poultry and animal feed- edible oil and ghee- auto-parts- tyres- varnishes- chemicals- cosmetics- IT equipment- electronics- sugar- cement- iron and steel products- fertilizer- motorcycles- pesticides- cigarettes- glass- textile- beverages- paint or foam sector": { "Any person": { "Active": "0.50%", "Non Active": "1.00%" } } }, "Purchase of immovable property": { "ref": "236K", "Purchase of immovable property": { "Any person": { "Active": "2.00%", "Non Active": "7.00%" } } }, "Remittance of amounts abroad through credit or debit or prepaid cards": { "ref": "236Y", "Remittance of amounts abroad through credit or debit or prepaid cards": { "Any person": { "Active": "1.00%", "Non Active": "2.00%" } } } };
+
+    for (var attributename in obj) {
+        $('#transaction').append('<option value="' + attributename + '">' + attributename + '</option>')
+    }
+
+    function fillDescription(_transaction) {
+        $('#description')
+            .empty()
+            .append('<option selected="selected" value="whatever">Please Select</option>')
+            ;
+        for (var attributename in obj[_transaction.value]) {
+            if (attributename != "ref")
+                $('#description').append('<option value="' + attributename + '">' + attributename + '</option>')
+        }
+    }
+
+    function fillTaxpayer(_description) {
+        $('#taxpayer')
+            .empty()
+            .append('<option selected="selected" value="whatever">Please Select</option>')
+            ;
+        for (var attributename in obj[$( "#transaction" ).val()][_description.value]) {
+                $('#taxpayer').append('<option value="' + attributename + '">' + attributename + '</option>')
+        }
+        
+    }
+
+    function fillStatus(_taxpayer) {
+        $('#status').prop("disabled", false);
+        $('#status')
+            .empty()
+            .append('<option selected="selected" value="whatever">Please Select</option>')
+            ;
+        for (var attributename in obj[$( "#transaction" ).val()][$("#description" ).val()][_taxpayer.value]) {
+                if(attributename.length==0)
+                $('#status').append('<option value="' + attributename + '">N/A</option>')
+                else
+                $('#status').append('<option value="' + attributename + '">' + attributename + '</option>')
+                
+            }
+            
+        // alert(jQuery.isEmptyObject(obj[$( "#transaction" ).val()][$("#description" ).val()][_taxpayer.value]))
+    }
+
+    function fillTaxpercent(_status){
+        whtaxpercent=parseInt(obj[$( "#transaction" ).val()][$("#description" ).val()][$("#taxpayer" ).val()][_status.value])/100
+        $("#taxpercentage").val(obj[$( "#transaction" ).val()][$("#description" ).val()][$("#taxpayer" ).val()][_status.value])
+        $("#whtax").val(whtaxpercent*$("#amount").val());
+    }
+
+    function calcTax(){
+        $("#whtax").val((parseInt($("#taxpercentage").val())/100) * $("#amount").val());
+    }
+</script>
+
+</html>
